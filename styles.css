@@ -544,6 +544,26 @@ button {
   display: block;
 }
 
+/* ── Print-all helper rules for mobile print engines ── */
+body.print-all,
+body.print-all .app-container,
+body.print-all .content-area {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  display: block !important;
+  position: static !important;
+}
+
+body.print-all .sheet,
+body.print-all .print-only {
+  display: block !important;
+  opacity: 1 !important;
+  animation: none !important;
+  transition: none !important;
+}
+
 .sheet-header {
   border-bottom: 2px solid var(--accent-teal);
   padding-bottom: 1rem;
