@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inside Medicine Care — ICU Home Care Medical File</title>
+  <meta name="description" content="Premium ICU Home Care Medical File Management System — Critical Care & Home Medical Services by Dr. Karim Al-Agmey">
+  
+  <!-- PWA & Mobile Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0d9488">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="IMC Care">
+  <link rel="apple-touch-icon" href="logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="logo.png" type="image/png">
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       APP HEADER
+       ═══════════════════════════════════════════════════════════════════ -->
+  <header class="app-header no-print">
+    <div class="header-left">
+      <div class="header-logo">
+        <img src="logo.png" alt="Inside Medicine Care Logo">
+      </div>
+      <h1 class="header-title">INSIDE MEDICINE CARE</h1>
+      <select id="header-patient-select" class="form-select header-patient-select" title="Switch Patient" style="margin-left:15px; padding:4px 24px 4px 8px; font-size:12px; height:28px; width:160px; background-color:var(--bg-tertiary); border:1px solid var(--border-color); color:#fff; border-radius:4px; cursor:pointer;">
+        <!-- Populated by JS -->
+      </select>
+    </div>
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="cover">📋 Cover</button>
+      <button class="nav-tab" data-tab="admission">🏥 Admission</button>
+      <button class="nav-tab" data-tab="drugs">💊 Drug Orders</button>
+    </nav>
+    <div class="header-actions">
+      <a href="blank_form.html" target="_blank" class="btn btn-sm btn-gold" id="blank-template-btn" style="text-decoration: none;" title="Open Blank Printable Form">📄 Blank Form</a>
+      <button class="btn btn-sm btn-secondary" id="export-btn" title="Export Data">📤 Export</button>
+      <button class="btn btn-sm btn-secondary" id="import-btn" title="Import Data">📥 Import</button>
+      <button class="btn btn-sm btn-secondary" id="print-all-btn" title="Print Full Patient File">🖨️ Print Full File</button>
+      <button class="btn btn-sm btn-primary" id="print-btn" title="Print Current Sheet">🖨️ Print Page</button>
+      <input type="file" id="import-file" accept=".json" style="display:none">
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       MAIN LAYOUT: SIDEBAR + CONTENT
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="app-container">
+
+    <!-- ─── SIDEBAR: PATIENT LIST ──────────────────────────────────── -->
+    <aside class="sidebar no-print">
+      <div class="sidebar-header">
+        <h2 style="margin:0;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;">Patients</h2>
+        <button class="btn btn-sm btn-gold" id="add-patient-btn" title="Add New Patient">+ New</button>
+      </div>
+      <div class="patient-list" id="patient-list">
+        <!-- Rendered by JS -->
+      </div>
+    </aside>
+
+    <!-- ─── MAIN CONTENT AREA ──────────────────────────────────────── -->
+    <main class="content-area" id="main-content">
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SHEET 0: COVER PAGE
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="sheet" id="sheet-cover" style="display:block;">
+        <div class="cover-page">
+          <div class="cover-logo">
+            <img src="logo.png" alt="Inside Medicine Care">
+          </div>
+          <div class="cover-title">INSIDE MEDICINE CARE</div>
+          <div class="cover-subtitle">Critical Care & Home Medical Services</div>
+
+          <div class="cover-divider"></div>
+
+          <div class="cover-file-title">PATIENT MEDICAL FILE</div>
+
+          <div class="cover-patient-info">
+            <table class="cover-info-table">
+              <tr>
+                <td class="cover-label">Patient Name</td>
+                <td class="cover-value" id="cover-patient-name">—</td>
+              </tr>
+              <tr>
+                <td class="cover-label">Age</td>
+                <td class="cover-value" id="cover-age">—</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="cover-divider"></div>
+
+          <div class="cover-patient-info" style="margin-top:1rem;">
+            <table class="cover-info-table">
+              <tr>
+                <td class="cover-label">Diagnosis</td>
+                <td class="cover-value" id="cover-diagnosis">—</td>
+              </tr>
+              <tr>
+                <td class="cover-label">File Number</td>
+                <td class="cover-value" id="cover-file-number">—</td>
+              </tr>
+              <tr>
+                <td class="cover-label">Gender</td>
+                <td class="cover-value" id="cover-gender">—</td>
+              </tr>
+              <tr>
+                <td class="cover-label">Location</td>
+                <td class="cover-value" id="cover-location">—</td>
+              </tr>
+              <tr>
+                <td class="cover-label">Status</td>
+                <td class="cover-value" id="cover-status">—</td>
+              </tr>
+              <tr>
+                <td class="cover-label">Code Status</td>
+                <td class="cover-value" id="cover-code-status">—</td>
+              </tr>
+              <tr>
+                <td class="cover-label">Phone</td>
+                <td class="cover-value" id="cover-phone">—</td>
+              </tr>
+              <tr>
+                <td class="cover-label">Devices / Lines</td>
+                <td class="cover-value" id="cover-devices">—</td>
+              </tr>
+              <tr>
+                <td class="cover-label">Emergency Contact</td>
+                <td class="cover-value" id="cover-emergency">—</td>
+              </tr>
+              <tr>
+                <td class="cover-label">Admission Date</td>
+                <td class="cover-value" id="cover-date">—</td>
+              </tr>
+              <tr>
+                <td class="cover-label">Attending Physician</td>
+                <td class="cover-value" id="cover-doctor">—</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="cover-footer">CONFIDENTIAL • CRITICAL CARE RECORD</div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SHEET 1: ADMISSION SHEET
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="sheet" id="sheet-admission">
+        <div class="sheet-header">
+          <h2 class="sheet-title">ICU Admission Sheet</h2>
+          <div class="sheet-meta">Complete patient demographic and clinical intake information</div>
+        </div>
+        <div class="sheet-body">
+
+          <!-- Patient Demographics -->
+          <div class="form-section">
+            <h3 class="form-section-title">Patient Demographics</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="adm-name">Full Name (English)</label>
+                <input type="text" class="form-input" id="adm-name" placeholder="e.g. Magda Al-Ismaili">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-name-ar">Full Name (Arabic)</label>
+                <input type="text" class="form-input" id="adm-name-ar" dir="rtl" placeholder="مجدة السماعيلي">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="adm-age">Age</label>
+                <input type="number" class="form-input" id="adm-age" min="0" max="150" placeholder="68">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-gender">Gender</label>
+                <select class="form-select" id="adm-gender">
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-file-number">File Number</label>
+                <input type="text" class="form-input" id="adm-file-number" placeholder="HC-2026-001">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="adm-phone">Phone</label>
+                <input type="tel" class="form-input" id="adm-phone" placeholder="+20 1XX XXX XXXX">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-admission-date">Admission Date</label>
+                <input type="date" class="form-input" id="adm-admission-date">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-location">Location</label>
+                <select class="form-select" id="adm-location">
+                  <option value="Home Care">Home Care</option>
+                  <option value="Medical ICU">Medical ICU</option>
+                  <option value="Surgical ICU">Surgical ICU</option>
+                  <option value="CCU">CCU</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Clinical Information -->
+          <div class="form-section">
+            <h3 class="form-section-title">Clinical Information</h3>
+            <div class="form-group">
+              <label class="form-label" for="adm-diagnosis">Primary Diagnosis</label>
+              <input type="text" class="form-input" id="adm-diagnosis" placeholder="e.g. Hepatorenal Syndrome (HRS)">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="adm-comorbidities">Comorbidities</label>
+              <textarea class="form-textarea" id="adm-comorbidities" rows="2" placeholder="e.g. DM Type 2, Hypertension, CKD Stage 4..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="adm-past-history">Past Medical & Surgical History</label>
+              <textarea class="form-textarea" id="adm-past-history" rows="2" placeholder="Previous surgeries, hospitalizations..."></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="adm-allergies">Drug Allergies</label>
+                <input type="text" class="form-input" id="adm-allergies" placeholder="NKDA or list allergies">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-code-status">Code Status</label>
+                <select class="form-select" id="adm-code-status">
+                  <option value="Full Code">Full Code</option>
+                  <option value="DNR">DNR</option>
+                  <option value="DNR/DNI">DNR / DNI</option>
+                  <option value="Comfort Care">Comfort Care Only</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Patient Status & Physician -->
+          <div class="form-section">
+            <h3 class="form-section-title">Status & Attending</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="adm-status">Patient Status</label>
+                <select class="form-select" id="adm-status">
+                  <option value="stable">Stable</option>
+                  <option value="monitoring">Monitoring</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-doctor">Attending Physician</label>
+                <input type="text" class="form-input" id="adm-doctor" placeholder="Dr. Karim Al-Agmey">
+              </div>
+            </div>
+          </div>
+
+          <!-- Initial Assessment -->
+          <div class="form-section">
+            <h3 class="form-section-title">Initial Assessment</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="adm-weight">Weight (kg)</label>
+                <input type="number" class="form-input" id="adm-weight" step="0.1" placeholder="75">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-height">Height (cm)</label>
+                <input type="number" class="form-input" id="adm-height" placeholder="170">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-gcs">GCS Score</label>
+                <input type="text" class="form-input" id="adm-gcs" placeholder="15 (E4V5M6)">
+              </div>
+            </div>
+          </div>
+
+          <!-- Initial Vitals -->
+          <div class="form-section">
+            <h3 class="form-section-title">Vital Signs on Admission</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="adm-bp">Blood Pressure</label>
+                <input type="text" class="form-input" id="adm-bp" placeholder="120/80">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-hr">Heart Rate</label>
+                <input type="text" class="form-input" id="adm-hr" placeholder="78 bpm">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-temp">Temperature</label>
+                <input type="text" class="form-input" id="adm-temp" placeholder="37.0 °C">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-rr">Respiratory Rate</label>
+                <input type="text" class="form-input" id="adm-rr" placeholder="18 /min">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-spo2">SpO2</label>
+                <input type="text" class="form-input" id="adm-spo2" placeholder="97%">
+              </div>
+            </div>
+          </div>
+
+          <!-- Devices & Lines -->
+          <div class="form-section">
+            <h3 class="form-section-title">Devices & Lines</h3>
+            <div class="form-row" style="flex-wrap:wrap;">
+              <label class="checkbox-label"><input type="checkbox" id="adm-dev-tracheostomy"> Tracheostomy</label>
+              <label class="checkbox-label"><input type="checkbox" id="adm-dev-ngt"> NGT</label>
+              <label class="checkbox-label"><input type="checkbox" id="adm-dev-foley"> Foley Catheter</label>
+              <label class="checkbox-label"><input type="checkbox" id="adm-dev-central-line"> Central Line</label>
+              <label class="checkbox-label"><input type="checkbox" id="adm-dev-peripheral-line"> Peripheral Line</label>
+              <label class="checkbox-label"><input type="checkbox" id="adm-dev-chest-tube"> Chest Tube</label>
+            </div>
+          </div>
+
+          <!-- Emergency Contact -->
+          <div class="form-section">
+            <h3 class="form-section-title">Emergency Contact</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="adm-ec-name">Contact Name</label>
+                <input type="text" class="form-input" id="adm-ec-name" placeholder="Full name">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-ec-relation">Relation</label>
+                <input type="text" class="form-input" id="adm-ec-relation" placeholder="Son / Daughter / Spouse...">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="adm-ec-phone">Phone</label>
+                <input type="tel" class="form-input" id="adm-ec-phone" placeholder="+20 1XX XXX XXXX">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions" style="margin-top:1.5rem; display:flex; gap:12px;">
+            <button class="btn btn-primary" id="save-admission-btn">💾 Save Admission Data</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SHEET 2: DRUG ORDER SHEET
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="sheet" id="sheet-drugs">
+        <div class="sheet-header">
+          <div class="flex-between" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h2 class="sheet-title">Critical Care Pharmacotherapy Matrix</h2>
+              <div class="sheet-meta">Intensive Care Unit (ICU) — Drug Order Sheet</div>
+            </div>
+          </div>
+        </div>
+        <div class="sheet-body" id="drug-sheet-content">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SHEET 2.5: ANTIBIOTIC HISTORY
+           ═══════════════════════════════════════════════════════════════ -->
+      <!-- ═══════════════════════════════════════════════════════════════
+           SHEET 2.5: ANTIBIOTIC HISTORY & STEWARDSHIP (PRINT-ONLY POPULATED)
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="sheet print-only" id="sheet-antibiotics">
+        <div class="sheet-header">
+          <h2 class="sheet-title">Antibiotic History & Stewardship / متابعة وسجل المضادات الحيوية</h2>
+          <div class="sheet-meta">Timeline and documentation of current and previous antimicrobial therapies / سجل وتوقيت العلاجات الحالية والسابقة بالمضادات الحيوية</div>
+        </div>
+        <div class="patient-bar" style="display:flex;border:1px solid #cbd5e1;border-radius:4px;margin-bottom:12px;font-size:11px;background:#f8fafc;">
+          <div style="flex:1.5;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Patient Name / اسم المريض</span>
+            <span class="patient-name-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">File # / رقم الملف</span>
+            <span class="patient-file-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1.2;padding:6px 10px;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Diagnosis / التشخيص</span>
+            <span class="patient-dx-span" style="font-weight:700;color:#000;"></span>
+          </div>
+        </div>
+        <div class="sheet-body" id="antibiotics-sheet-content">
+          <!-- Populated by JS (populated without buttons/actions in print) -->
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SHEET 3: FLUID BALANCE (24-HOUR) — PRINT-ONLY BLANK TEMPLATE
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="sheet print-only" id="sheet-fluid-print">
+        <div class="sheet-header">
+          <div class="flex-between" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h2 class="sheet-title">24-Hour Fluid Balance Sheet / بيان توازن السوائل اليومي</h2>
+              <div class="sheet-meta">Hourly Intake & Output Monitoring / متابعة السوائل والصادر والوارد بالساعة</div>
+            </div>
+            <div style="font-size:11px;color:var(--text-muted);text-align:right;">
+              Date: ____/____/________
+            </div>
+          </div>
+        </div>
+        <div class="patient-bar" style="display:flex;border:1px solid #cbd5e1;border-radius:4px;margin-bottom:12px;font-size:11px;background:#f8fafc;">
+          <div style="flex:1.5;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Patient Name / اسم المريض</span>
+            <span class="patient-name-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">File # / رقم الملف</span>
+            <span class="patient-file-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1.2;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Diagnosis / التشخيص</span>
+            <span class="patient-dx-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1;padding:6px 10px;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Day # / اليوم العلاجي</span>
+            <span style="font-weight:700;color:#000;">_________________</span>
+          </div>
+        </div>
+        <table class="med-table fluid-table" style="width:100%;border-collapse:collapse;font-size:9px;margin-bottom:10px;">
+          <thead>
+            <tr>
+              <th rowspan="2" style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;text-align:center;width:45px;padding:4px 2px;">Hour</th>
+              <th colspan="5" style="background:#1d4ed8;color:#fff;border:1px solid #cbd5e1;text-align:center;padding:4px 2px;">INTAKE (ml) / الوارد</th>
+              <th rowspan="2" style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;text-align:center;width:60px;padding:4px 2px;">Total In</th>
+              <th colspan="5" style="background:#dc2626;color:#fff;border:1px solid #cbd5e1;text-align:center;padding:4px 2px;">OUTPUT (ml) / الصادر</th>
+              <th rowspan="2" style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;text-align:center;width:60px;padding:4px 2px;">Total Out</th>
+              <th rowspan="2" style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;text-align:center;width:60px;padding:4px 2px;">Balance</th>
+            </tr>
+            <tr>
+              <th style="background:#2563eb;color:#fff;border:1px solid #cbd5e1;font-size:7px;padding:3px 2px;font-weight:400;">IV Fluids</th>
+              <th style="background:#2563eb;color:#fff;border:1px solid #cbd5e1;font-size:7px;padding:3px 2px;font-weight:400;">Meds</th>
+              <th style="background:#2563eb;color:#fff;border:1px solid #cbd5e1;font-size:7px;padding:3px 2px;font-weight:400;">Enteral</th>
+              <th style="background:#2563eb;color:#fff;border:1px solid #cbd5e1;font-size:7px;padding:3px 2px;font-weight:400;">Oral</th>
+              <th style="background:#2563eb;color:#fff;border:1px solid #cbd5e1;font-size:7px;padding:3px 2px;font-weight:400;">Blood</th>
+              <th style="background:#ef4444;color:#fff;border:1px solid #cbd5e1;font-size:7px;padding:3px 2px;font-weight:400;">Urine</th>
+              <th style="background:#ef4444;color:#fff;border:1px solid #cbd5e1;font-size:7px;padding:3px 2px;font-weight:400;">Drain</th>
+              <th style="background:#ef4444;color:#fff;border:1px solid #cbd5e1;font-size:7px;padding:3px 2px;font-weight:400;">NGT</th>
+              <th style="background:#ef4444;color:#fff;border:1px solid #cbd5e1;font-size:7px;padding:3px 2px;font-weight:400;">Stool</th>
+              <th style="background:#ef4444;color:#fff;border:1px solid #cbd5e1;font-size:7px;padding:3px 2px;font-weight:400;">Emesis</th>
+            </tr>
+          </thead>
+          <tbody id="print-fluid-body">
+            <!-- Populated dynamically with 24 hours + subtotals + grand total by JS -->
+          </tbody>
+        </table>
+        <div class="weight-row" style="margin-top:10px;display:flex;gap:20px;font-size:11px;font-weight:600;">
+          <span>Daily Weight / الوزن اليومي:</span> <div style="width:80px;border-bottom:1px solid #cbd5e1;display:inline-block;"></div> kg
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <span>Net 24h Balance / صافي الميزان:</span> <div style="width:80px;border-bottom:1px solid #cbd5e1;display:inline-block;"></div> ml
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <span>Nurse Signature / توقيع الممرض:</span> <div style="width:150px;border-bottom:1px solid #cbd5e1;display:inline-block;"></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SHEET 4: DAILY I/O SUMMARY (30-DAY MONTHLY) — PRINT-ONLY BLANK TEMPLATE
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="sheet print-only" id="sheet-io-summary-print">
+        <div class="sheet-header">
+          <h2 class="sheet-title">Daily Intake & Output Monthly Summary / ملخص السوائل والوزن الشهري</h2>
+          <div class="sheet-meta">30-Day Cumulative Fluid Balance Overview / متابعة تراكمية شهرية (30 يوماً)</div>
+        </div>
+        <div class="patient-bar" style="display:flex;border:1px solid #cbd5e1;border-radius:4px;margin-bottom:12px;font-size:11px;background:#f8fafc;">
+          <div style="flex:1.5;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Patient Name / اسم المريض</span>
+            <span class="patient-name-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">File # / رقم الملف</span>
+            <span class="patient-file-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1.2;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Diagnosis / التشخيص</span>
+            <span class="patient-dx-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1;padding:6px 10px;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Month / الشهر والسنة</span>
+            <span style="font-weight:700;color:#000;">_________________</span>
+          </div>
+        </div>
+        <table class="med-table" style="width:100%;border-collapse:collapse;font-size:9px;margin-bottom:10px;">
+          <thead>
+            <tr>
+              <th style="width:70px;background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;">Date / التاريخ</th>
+              <th style="width:40px;background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;text-align:center;">Day #</th>
+              <th style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;text-align:center;">Total Intake (ml) / الوارد</th>
+              <th style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;text-align:center;">Total Output (ml) / الصادر</th>
+              <th style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;text-align:center;">Net Balance (ml) / الصافي</th>
+              <th style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;text-align:center;">Cumulative (ml) / التراكمي</th>
+              <th style="width:80px;background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;text-align:center;">Weight (kg)</th>
+              <th style="width:150px;background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;">Notes / ملاحظات المتابعة</th>
+            </tr>
+          </thead>
+          <tbody id="print-io-monthly-body">
+            <!-- Populated dynamically with 30 rows by JS -->
+          </tbody>
+        </table>
+        <div style="margin-top:10px;font-size:10px;color:var(--text-mid);">
+          <strong>Physician Comments / ملاحظات الطبيب المعالج:</strong>
+          <div style="min-height:50px;border:1px solid #cbd5e1;border-radius:4px;margin-top:4px;padding:8px;"></div>
+        </div>
+        <div style="margin-top:10px;display:flex;justify-content:space-between;font-size:10px;color:var(--text-mid);">
+          <div>Attending Physician: ________________________________</div>
+          <div>Signature: ________________________________</div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SHEET 5: AGGREGATED LAB RESULTS — PRINT-ONLY BLANK TEMPLATE
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="sheet print-only" id="sheet-labs-print">
+        <div class="sheet-header">
+          <h2 class="sheet-title">Aggregated Lab Results / بيان نتائج التحاليل التراكمي</h2>
+          <div class="sheet-meta">Laboratory Investigations with Trend Tracking / تسجيل وتحليل ومتابعة نتائج التحاليل المخبرية</div>
+        </div>
+        <div class="patient-bar" style="display:flex;border:1px solid #cbd5e1;border-radius:4px;margin-bottom:12px;font-size:11px;background:#f8fafc;">
+          <div style="flex:1.5;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Patient Name / اسم المريض</span>
+            <span class="patient-name-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">File # / رقم الملف</span>
+            <span class="patient-file-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1.2;padding:6px 10px;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Diagnosis / التشخيص</span>
+            <span class="patient-dx-span" style="font-weight:700;color:#000;"></span>
+          </div>
+        </div>
+        <table class="med-table lab-table" style="width:100%;border-collapse:collapse;font-size:9px;margin-bottom:10px;">
+          <thead>
+            <tr>
+              <th style="text-align:left;background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;">Parameter</th>
+              <th style="text-align:left;background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;width:70px;">Unit</th>
+              <th class="range-col" style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;width:80px;text-align:center;">Normal Range</th>
+              <th style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;text-align:center;width:70px;">Date:<br>__/__/__</th>
+              <th style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;text-align:center;width:70px;">Date:<br>__/__/__</th>
+              <th style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;text-align:center;width:70px;">Date:<br>__/__/__</th>
+              <th style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;text-align:center;width:70px;">Date:<br>__/__/__</th>
+              <th style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;text-align:center;width:70px;">Date:<br>__/__/__</th>
+              <th style="background:#0d9488;color:#fff;border:1px solid #cbd5e1;padding:5px;text-align:center;width:70px;">Date:<br>__/__/__</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- CBC -->
+            <tr class="cat-header" style="background:#f1f5f9;font-weight:700;"><td colspan="9" style="color:#0d9488;padding:4px 8px;border:1px solid #cbd5e1;">Complete Blood Count (CBC)</td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">WBC</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">×10³/µL</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">4 – 11</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">Hemoglobin</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">g/dL</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">12 – 17</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">Platelets</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">×10³/µL</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">150 – 400</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <!-- Renal -->
+            <tr class="cat-header" style="background:#f1f5f9;font-weight:700;"><td colspan="9" style="color:#0d9488;padding:4px 8px;border:1px solid #cbd5e1;">Renal Function / وظائف الكلى</td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">BUN / Urea</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">mg/dL</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">7 – 20</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">Creatinine</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">mg/dL</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">0.6 – 1.2</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <!-- Liver -->
+            <tr class="cat-header" style="background:#f1f5f9;font-weight:700;"><td colspan="9" style="color:#0d9488;padding:4px 8px;border:1px solid #cbd5e1;">Liver Function / وظائف الكبد</td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">ALT</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">U/L</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">7 – 56</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">AST</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">U/L</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">10 – 40</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">Total Bilirubin</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">mg/dL</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">0.1 – 1.2</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">Albumin</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">g/dL</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">3.5 – 5.5</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <!-- Electrolytes -->
+            <tr class="cat-header" style="background:#f1f5f9;font-weight:700;"><td colspan="9" style="color:#0d9488;padding:4px 8px;border:1px solid #cbd5e1;">Electrolytes / الأملاح والمعادن</td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">Na⁺</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">mEq/L</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">136 – 145</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">K⁺</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">mEq/L</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">3.5 – 5.0</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">Ca²⁺</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">mg/dL</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">8.5 – 10.5</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">Mg²⁺</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">mg/dL</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">1.7 – 2.2</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">PO₄³⁻</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">mg/dL</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">2.5 – 4.5</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <!-- Coagulation -->
+            <tr class="cat-header" style="background:#f1f5f9;font-weight:700;"><td colspan="9" style="color:#0d9488;padding:4px 8px;border:1px solid #cbd5e1;">Coagulation Profile / التجلط</td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">PT</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">sec</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">11 – 13.5</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">INR</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">—</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">0.8 – 1.1</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">PTT</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">sec</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">25 – 35</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <!-- ABG -->
+            <tr class="cat-header" style="background:#f1f5f9;font-weight:700;"><td colspan="9" style="color:#0d9488;padding:4px 8px;border:1px solid #cbd5e1;">Arterial Blood Gas (ABG) / غازات الدم الشرياني</td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">pH</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">—</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">7.35 – 7.45</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">pCO₂</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">mmHg</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">35 – 45</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">pO₂</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">mmHg</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">80 – 100</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">HCO₃⁻</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">mEq/L</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">22 – 26</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">Lactate</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">mmol/L</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">0.5 – 2.0</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <!-- Inflammatory -->
+            <tr class="cat-header" style="background:#f1f5f9;font-weight:700;"><td colspan="9" style="color:#0d9488;padding:4px 8px;border:1px solid #cbd5e1;">Inflammatory Markers / دلالات الالتهاب</td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">CRP</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">mg/L</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">0 – 5</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr style="height:20px;"><td style="border:1px solid #cbd5e1;padding:4px 8px;font-weight:600;">Procalcitonin</td><td style="border:1px solid #cbd5e1;padding:4px 8px;">ng/mL</td><td class="range-col" style="border:1px solid #cbd5e1;text-align:center;">0 – 0.5</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SHEET 6: MEDICAL PROGRESS NOTES (SOAP) — PRINT-ONLY BLANK TEMPLATE
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="sheet print-only" id="sheet-notes-print">
+        <div class="sheet-header">
+          <h2 class="sheet-title">Medical Progress Notes / الملاحظات الطبية ومتابعة الحالة</h2>
+          <div class="sheet-meta">SOAP Format — Daily Clinical Documentation / التدوين اليومي لمتابعة الحالة ومستوى الوعي والعلامات الحيوية</div>
+        </div>
+        <div class="patient-bar" style="display:flex;border:1px solid #cbd5e1;border-radius:4px;margin-bottom:12px;font-size:11px;background:#f8fafc;">
+          <div style="flex:1.5;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Patient Name / اسم المريض</span>
+            <span class="patient-name-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">File # / رقم الملف</span>
+            <span class="patient-file-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1.2;padding:6px 10px;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Diagnosis / التشخيص</span>
+            <span class="patient-dx-span" style="font-weight:700;color:#000;"></span>
+          </div>
+        </div>
+
+        <!-- SOAP Block 1 -->
+        <div style="border:1px solid #cbd5e1;border-radius:4px;margin-bottom:12px;page-break-inside:avoid;">
+          <div style="display:flex;gap:15px;padding:6px 10px;background:#f1f5f9;border-bottom:1px solid #cbd5e1;font-size:9px;font-weight:600;color:#475569;">
+            <span>Date / التاريخ: _________________</span>
+            <span>Time / الوقت: _______________</span>
+            <span>Day # / اليوم العلاجي: ___________</span>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">S — SUBJECTIVE / الشكاوى والأعراض</div>
+            <div style="min-height:30px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">O — OBJECTIVE / الفحص الإكلينيكي والعلامات الحيوية والتحاليل</div>
+            <div style="min-height:45px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">A — ASSESSMENT / التقييم الطبي والحالة الحالية</div>
+            <div style="min-height:30px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">P — PLAN / الخطة العلاجية والتعليمات وتعديل الجرعات</div>
+            <div style="min-height:45px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;text-align:right;font-size:10px;color:#475569;">
+            Physician Signature / توقيع الطبيب المعالج: _____________________________
+          </div>
+        </div>
+
+        <!-- SOAP Block 2 -->
+        <div style="border:1px solid #cbd5e1;border-radius:4px;margin-bottom:5px;page-break-inside:avoid;">
+          <div style="display:flex;gap:15px;padding:6px 10px;background:#f1f5f9;border-bottom:1px solid #cbd5e1;font-size:9px;font-weight:600;color:#475569;">
+            <span>Date / التاريخ: _________________</span>
+            <span>Time / الوقت: _______________</span>
+            <span>Day # / اليوم العلاجي: ___________</span>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">S — SUBJECTIVE / الشكاوى والأعراض</div>
+            <div style="min-height:30px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">O — OBJECTIVE / الفحص الإكلينيكي والعلامات الحيوية والتحاليل</div>
+            <div style="min-height:45px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">A — ASSESSMENT / التقييم الطبي والحالة الحالية</div>
+            <div style="min-height:30px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">P — PLAN / الخطة العلاجية والتعليمات وتعديل الجرعات</div>
+            <div style="min-height:45px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;text-align:right;font-size:10px;color:#475569;">
+            Physician Signature / توقيع الطبيب المعالج: _____________________________
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SHEET 7: MEDICAL PROGRESS NOTES PAGE 2 — PRINT-ONLY BLANK TEMPLATE
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="sheet print-only" id="sheet-notes-extra-print">
+        <div class="sheet-header">
+          <h2 class="sheet-title">Medical Progress Notes (Continued) / الملاحظات الطبية اليومية (تابع)</h2>
+          <div class="sheet-meta">SOAP Format — Daily Clinical Documentation / التدوين الطبي اليومي لمتابعة الحالة</div>
+        </div>
+        <div class="patient-bar" style="display:flex;border:1px solid #cbd5e1;border-radius:4px;margin-bottom:12px;font-size:11px;background:#f8fafc;">
+          <div style="flex:1.5;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Patient Name / اسم المريض</span>
+            <span class="patient-name-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1;padding:6px 10px;border-right:1px solid #cbd5e1;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">File # / رقم الملف</span>
+            <span class="patient-file-span" style="font-weight:700;color:#000;"></span>
+          </div>
+          <div style="flex:1.2;padding:6px 10px;display:flex;flex-direction:column;">
+            <span style="font-size:8px;font-weight:600;color:#64748b;text-transform:uppercase;">Diagnosis / التشخيص</span>
+            <span class="patient-dx-span" style="font-weight:700;color:#000;"></span>
+          </div>
+        </div>
+
+        <!-- SOAP Block 3 -->
+        <div style="border:1px solid #cbd5e1;border-radius:4px;margin-bottom:12px;page-break-inside:avoid;">
+          <div style="display:flex;gap:15px;padding:6px 10px;background:#f1f5f9;border-bottom:1px solid #cbd5e1;font-size:9px;font-weight:600;color:#475569;">
+            <span>Date / التاريخ: _________________</span>
+            <span>Time / الوقت: _______________</span>
+            <span>Day # / اليوم العلاجي: ___________</span>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">S — SUBJECTIVE / الشكاوى والأعراض</div>
+            <div style="min-height:30px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">O — OBJECTIVE / الفحص الإكلينيكي والعلامات الحيوية والتحاليل</div>
+            <div style="min-height:45px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">A — ASSESSMENT / التقييم الطبي والحالة الحالية</div>
+            <div style="min-height:30px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">P — PLAN / الخطة العلاجية والتعليمات وتعديل الجرعات</div>
+            <div style="min-height:45px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;text-align:right;font-size:10px;color:#475569;">
+            Physician Signature / توقيع الطبيب المعالج: _____________________________
+          </div>
+        </div>
+
+        <!-- SOAP Block 4 -->
+        <div style="border:1px solid #cbd5e1;border-radius:4px;margin-bottom:5px;page-break-inside:avoid;">
+          <div style="display:flex;gap:15px;padding:6px 10px;background:#f1f5f9;border-bottom:1px solid #cbd5e1;font-size:9px;font-weight:600;color:#475569;">
+            <span>Date / التاريخ: _________________</span>
+            <span>Time / الوقت: _______________</span>
+            <span>Day # / اليوم العلاجي: ___________</span>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">S — SUBJECTIVE / الشكاوى والأعراض</div>
+            <div style="min-height:30px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">O — OBJECTIVE / الفحص الإكلينيكي والعلامات الحيوية والتحاليل</div>
+            <div style="min-height:45px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">A — ASSESSMENT / التقييم الطبي والحالة الحالية</div>
+            <div style="min-height:30px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;border-bottom:1px solid #f1f5f9;">
+            <div style="display:inline-block;background:#0d9488;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;margin-bottom:3px;">P — PLAN / الخطة العلاجية والتعليمات وتعديل الجرعات</div>
+            <div style="min-height:45px;border-bottom:1px dotted #e2e8f0;"></div>
+          </div>
+          <div style="padding:6px 10px;text-align:right;font-size:10px;color:#475569;">
+            Physician Signature / توقيع الطبيب المعالج: _____________________________
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       MODALS
+       ═══════════════════════════════════════════════════════════════════ -->
+
+  <!-- ─── Add Patient Modal ────────────────────────────────────────── -->
+  <div class="modal" id="modal-add-patient" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+    <div class="modal-content" style="background:#111827;border-radius:12px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.4);transition:transform 0.2s ease, opacity 0.2s ease;">
+      <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem;border-bottom:1px solid #1e293b;">
+        <h3 style="margin:0;font-size:1.1rem;">Add New Patient</h3>
+        <button class="modal-close btn-icon" style="background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem;">
+        <div class="form-group">
+          <label class="form-label" for="new-patient-name">Patient Name (English)</label>
+          <input type="text" class="form-input" id="new-patient-name" placeholder="Full name in English">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="new-patient-name-ar">Patient Name (Arabic)</label>
+          <input type="text" class="form-input" id="new-patient-name-ar" dir="rtl" placeholder="الاسم بالعربي">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="new-patient-age">Age</label>
+            <input type="number" class="form-input" id="new-patient-age" min="0" max="150">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="new-patient-gender">Gender</label>
+            <select class="form-select" id="new-patient-gender">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="new-patient-diagnosis">Primary Diagnosis</label>
+          <input type="text" class="form-input" id="new-patient-diagnosis" placeholder="Clinical diagnosis">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="new-patient-file">File Number</label>
+          <input type="text" class="form-input" id="new-patient-file" placeholder="HC-2026-XXX">
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:1rem 1.5rem;border-top:1px solid #1e293b;display:flex;justify-content:flex-end;gap:10px;">
+        <button class="btn btn-secondary modal-close" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="save-patient-btn">Add Patient</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Add Drug Modal ───────────────────────────────────────────── -->
+  <div class="modal" id="modal-add-drug" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+    <div class="modal-content" style="background:#111827;border-radius:12px;max-width:550px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.4);transition:transform 0.2s ease, opacity 0.2s ease;">
+      <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem;border-bottom:1px solid #1e293b;">
+        <h3 style="margin:0;font-size:1.1rem;" id="drug-modal-title">Add Medication</h3>
+        <button class="modal-close btn-icon" style="background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem;">
+        <div class="form-group">
+          <label class="form-label" for="drug-name">Medication Name</label>
+          <input type="text" class="form-input" id="drug-name" placeholder="e.g. Meronam (Meropenem)">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="drug-dosage">Exact Dosage</label>
+            <input type="text" class="form-input" id="drug-dosage" placeholder="e.g. 1 g">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="drug-route">Route</label>
+            <select class="form-select" id="drug-route">
+              <option value="IV">IV</option>
+              <option value="IV Push">IV Push</option>
+              <option value="IV Infusion">IV Infusion</option>
+              <option value="PO">PO</option>
+              <option value="PO / NGT">PO / NGT</option>
+              <option value="SC">SC</option>
+              <option value="IM">IM</option>
+              <option value="PR">PR (Rectal)</option>
+              <option value="Inhalation">Inhalation</option>
+              <option value="Topical">Topical</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="drug-frequency">Frequency</label>
+            <input type="text" class="form-input" id="drug-frequency" placeholder="e.g. Every 8 hours">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="drug-timing">Scheduled Timing</label>
+            <input type="text" class="form-input" id="drug-timing" placeholder="e.g. 06:00 — 14:00 — 22:00">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="drug-directives">Clinical Nursing Directives</label>
+          <textarea class="form-textarea" id="drug-directives" rows="2" placeholder="Special instructions for nursing staff..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:1rem 1.5rem;border-top:1px solid #1e293b;display:flex;justify-content:flex-end;gap:10px;">
+        <button class="btn btn-secondary modal-close" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="save-drug-btn">Add Medication</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Add Lab Results Modal ────────────────────────────────────── -->
+  <div class="modal" id="modal-add-lab" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+    <div class="modal-content" style="background:#111827;border-radius:12px;max-width:600px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.4);transition:transform 0.2s ease, opacity 0.2s ease;">
+      <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem;border-bottom:1px solid #1e293b;">
+        <h3 style="margin:0;font-size:1.1rem;">Add Lab Results</h3>
+        <button class="modal-close btn-icon" style="background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem;" id="lab-modal-body">
+        <div class="form-group">
+          <label class="form-label" for="lab-date">Date</label>
+          <input type="date" class="form-input" id="lab-date">
+        </div>
+
+        <!-- CBC -->
+        <h4 style="margin:1rem 0 0.5rem;color:#14b8a6;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;">Complete Blood Count</h4>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">WBC (×10³/µL)</label><input type="number" step="0.1" class="form-input lab-field" data-param="WBC" placeholder="4-11"></div>
+          <div class="form-group"><label class="form-label">Hb (g/dL)</label><input type="number" step="0.1" class="form-input lab-field" data-param="Hb" placeholder="12-17"></div>
+          <div class="form-group"><label class="form-label">Platelets (×10³)</label><input type="number" step="1" class="form-input lab-field" data-param="Platelets" placeholder="150-400"></div>
+        </div>
+
+        <!-- Renal -->
+        <h4 style="margin:1rem 0 0.5rem;color:#14b8a6;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;">Renal Function</h4>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">BUN (mg/dL)</label><input type="number" step="0.1" class="form-input lab-field" data-param="BUN" placeholder="7-20"></div>
+          <div class="form-group"><label class="form-label">Creatinine (mg/dL)</label><input type="number" step="0.01" class="form-input lab-field" data-param="Creatinine" placeholder="0.6-1.2"></div>
+        </div>
+
+        <!-- Liver -->
+        <h4 style="margin:1rem 0 0.5rem;color:#14b8a6;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;">Liver Function</h4>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">ALT (U/L)</label><input type="number" step="1" class="form-input lab-field" data-param="ALT" placeholder="7-56"></div>
+          <div class="form-group"><label class="form-label">AST (U/L)</label><input type="number" step="1" class="form-input lab-field" data-param="AST" placeholder="10-40"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Total Bilirubin (mg/dL)</label><input type="number" step="0.1" class="form-input lab-field" data-param="Total Bilirubin" placeholder="0.1-1.2"></div>
+          <div class="form-group"><label class="form-label">Albumin (g/dL)</label><input type="number" step="0.1" class="form-input lab-field" data-param="Albumin" placeholder="3.5-5.5"></div>
+        </div>
+
+        <!-- Electrolytes -->
+        <h4 style="margin:1rem 0 0.5rem;color:#14b8a6;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;">Electrolytes</h4>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Na⁺ (mEq/L)</label><input type="number" step="0.1" class="form-input lab-field" data-param="Na" placeholder="136-145"></div>
+          <div class="form-group"><label class="form-label">K⁺ (mEq/L)</label><input type="number" step="0.1" class="form-input lab-field" data-param="K" placeholder="3.5-5.0"></div>
+          <div class="form-group"><label class="form-label">Ca²⁺ (mg/dL)</label><input type="number" step="0.1" class="form-input lab-field" data-param="Ca" placeholder="8.5-10.5"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Mg²⁺ (mg/dL)</label><input type="number" step="0.1" class="form-input lab-field" data-param="Mg" placeholder="1.7-2.2"></div>
+          <div class="form-group"><label class="form-label">PO₄³⁻ (mg/dL)</label><input type="number" step="0.1" class="form-input lab-field" data-param="PO4" placeholder="2.5-4.5"></div>
+        </div>
+
+        <!-- Coagulation -->
+        <h4 style="margin:1rem 0 0.5rem;color:#14b8a6;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;">Coagulation Profile</h4>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">PT (sec)</label><input type="number" step="0.1" class="form-input lab-field" data-param="PT" placeholder="11-13.5"></div>
+          <div class="form-group"><label class="form-label">INR</label><input type="number" step="0.01" class="form-input lab-field" data-param="INR" placeholder="0.8-1.1"></div>
+          <div class="form-group"><label class="form-label">PTT (sec)</label><input type="number" step="0.1" class="form-input lab-field" data-param="PTT" placeholder="25-35"></div>
+        </div>
+
+        <!-- ABG -->
+        <h4 style="margin:1rem 0 0.5rem;color:#14b8a6;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;">Arterial Blood Gas (ABG)</h4>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">pH</label><input type="number" step="0.01" class="form-input lab-field" data-param="pH" placeholder="7.35-7.45"></div>
+          <div class="form-group"><label class="form-label">pCO₂ (mmHg)</label><input type="number" step="0.1" class="form-input lab-field" data-param="pCO2" placeholder="35-45"></div>
+          <div class="form-group"><label class="form-label">pO₂ (mmHg)</label><input type="number" step="0.1" class="form-input lab-field" data-param="pO2" placeholder="80-100"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">HCO₃⁻ (mEq/L)</label><input type="number" step="0.1" class="form-input lab-field" data-param="HCO3" placeholder="22-26"></div>
+          <div class="form-group"><label class="form-label">Lactate (mmol/L)</label><input type="number" step="0.1" class="form-input lab-field" data-param="Lactate" placeholder="0.5-2.0"></div>
+        </div>
+
+        <!-- Inflammatory -->
+        <h4 style="margin:1rem 0 0.5rem;color:#14b8a6;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;">Inflammatory Markers</h4>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">CRP (mg/L)</label><input type="number" step="0.1" class="form-input lab-field" data-param="CRP" placeholder="0-5"></div>
+          <div class="form-group"><label class="form-label">Procalcitonin (ng/mL)</label><input type="number" step="0.01" class="form-input lab-field" data-param="Procalcitonin" placeholder="0-0.5"></div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:1rem 1.5rem;border-top:1px solid #1e293b;display:flex;justify-content:flex-end;gap:10px;">
+        <button class="btn btn-secondary modal-close" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="save-lab-btn">Save Lab Results</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Add Progress Note Modal ──────────────────────────────────── -->
+  <div class="modal" id="modal-add-note" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+    <div class="modal-content" style="background:#111827;border-radius:12px;max-width:600px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.4);transition:transform 0.2s ease, opacity 0.2s ease;">
+      <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem;border-bottom:1px solid #1e293b;">
+        <h3 style="margin:0;font-size:1.1rem;">Add Progress Note (SOAP)</h3>
+        <button class="modal-close btn-icon" style="background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem;">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="note-date">Date</label>
+            <input type="date" class="form-input" id="note-date">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="note-time">Time</label>
+            <input type="time" class="form-input" id="note-time">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="note-subjective">S — Subjective</label>
+          <textarea class="form-textarea" id="note-subjective" rows="2" placeholder="Patient complaints, symptoms, history..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="note-objective">O — Objective</label>
+          <textarea class="form-textarea" id="note-objective" rows="3" placeholder="Vitals, physical examination findings, lab results..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="note-assessment">A — Assessment</label>
+          <textarea class="form-textarea" id="note-assessment" rows="2" placeholder="Clinical assessment and diagnosis..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="note-plan">P — Plan</label>
+          <textarea class="form-textarea" id="note-plan" rows="3" placeholder="Treatment plan, medication changes, consultations..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="note-doctor">Physician</label>
+          <input type="text" class="form-input" id="note-doctor" placeholder="Dr. Karim Al-Agmey">
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:1rem 1.5rem;border-top:1px solid #1e293b;display:flex;justify-content:flex-end;gap:10px;">
+        <button class="btn btn-secondary modal-close" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="save-note-btn">Save Note</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Add/Edit Antibiotic Modal ────────────────────────────────── -->
+  <div class="modal" id="modal-add-antibiotic" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+    <div class="modal-content" style="background:#111827;border-radius:12px;max-width:550px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.4);transition:transform 0.2s ease, opacity 0.2s ease;">
+      <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem;border-bottom:1px solid #1e293b;">
+        <h3 style="margin:0;font-size:1.1rem;" id="anti-modal-title">Add Antibiotic</h3>
+        <button class="modal-close btn-icon" style="background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem;">
+        <div class="form-group">
+          <label class="form-label" for="anti-name">Antibiotic Name</label>
+          <input type="text" class="form-input" id="anti-name" placeholder="e.g. Meronam (Meropenem)">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="anti-dosage">Exact Dosage</label>
+            <input type="text" class="form-input" id="anti-dosage" placeholder="e.g. 1 g">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="anti-route">Route</label>
+            <select class="form-select" id="anti-route">
+              <option value="IV">IV</option>
+              <option value="IV Push">IV Push</option>
+              <option value="IV Infusion">IV Infusion</option>
+              <option value="PO">PO</option>
+              <option value="PO / NGT">PO / NGT</option>
+              <option value="SC">SC</option>
+              <option value="IM">IM</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="anti-frequency">Frequency</label>
+            <input type="text" class="form-input" id="anti-frequency" placeholder="e.g. Every 8 hours (q8h)">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="anti-timing">Scheduled Timing</label>
+            <input type="text" class="form-input" id="anti-timing" placeholder="e.g. 06:00 — 14:00 — 22:00">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="anti-start-date">Start Date</label>
+          <input type="date" class="form-input" id="anti-start-date">
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:1rem 1.5rem;border-top:1px solid #1e293b;display:flex;justify-content:flex-end;gap:10px;">
+        <button class="btn btn-secondary modal-close" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="save-anti-btn">Save Antibiotic</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Stop Antibiotic Modal ────────────────────────────────────── -->
+  <div class="modal" id="modal-stop-antibiotic" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+    <div class="modal-content" style="background:#111827;border-radius:12px;max-width:400px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.4);transition:transform 0.2s ease, opacity 0.2s ease;">
+      <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem;border-bottom:1px solid #1e293b;">
+        <h3 style="margin:0;font-size:1.1rem;">Stop Antibiotic Therapy</h3>
+        <button class="modal-close btn-icon" style="background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem;">
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:15px;" id="stop-anti-confirm-msg">Are you sure you want to stop this antibiotic? Please select the end date:</p>
+        <div class="form-group">
+          <label class="form-label" for="anti-stop-date">Stop Date</label>
+          <input type="date" class="form-input" id="anti-stop-date">
+        </div>
+      </div>
+      <div class="modal-footer" style="padding:1rem 1.5rem;border-top:1px solid #1e293b;display:flex;justify-content:flex-end;gap:10px;">
+        <button class="btn btn-secondary modal-close" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-danger" id="confirm-stop-anti-btn">🛑 Stop Therapy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <!-- App JS -->
+  <script src="app.js"></script>
+</body>
+</html>

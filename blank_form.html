@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inside Medicine Care — Blank Medical File Template</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="logo.png" type="image/png">
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       BLANK FORM PRINT STYLESHEET
+       Premium Medical File Template — Inside Medicine Care
+       ═══════════════════════════════════════════════════════════════ */
+
+    :root {
+      --teal: #0d9488;
+      --teal-light: #14b8a6;
+      --gold: #c8a94e;
+      --gold-dark: #a8892e;
+      --dark-bg: #0f172a;
+      --card-bg: #111827;
+      --border: #cbd5e1;
+      --border-light: #e2e8f0;
+      --text-dark: #1e293b;
+      --text-mid: #475569;
+      --text-light: #94a3b8;
+    }
+
+    @page {
+      size: A4;
+      margin: 12mm 14mm;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', 'Cairo', sans-serif;
+      color: var(--text-dark);
+      background: #fff;
+      font-size: 11px;
+      line-height: 1.4;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ─── PAGE BREAK HELPERS ─── */
+    .page-break {
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .avoid-break {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    /* ─── SCREEN-ONLY TOOLBAR ─── */
+    .toolbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: var(--dark-bg);
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .toolbar-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .toolbar-title span {
+      color: var(--gold);
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .toolbar-btn {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-print {
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .btn-print:hover {
+      background: var(--teal-light);
+      transform: translateY(-1px);
+    }
+
+    .btn-back {
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+    }
+
+    .btn-back:hover {
+      background: #334155;
+      color: #fff;
+    }
+
+    .content-wrapper {
+      padding-top: 70px;
+    }
+
+    @media print {
+      .toolbar { display: none !important; }
+      .content-wrapper { padding-top: 0; }
+      body { background: white; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       COVER PAGE
+       ═══════════════════════════════════════════════════════════════ */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+    }
+
+    .cover-border {
+      position: absolute;
+      top: 20px; right: 20px; bottom: 20px; left: 20px;
+      border: 2px solid var(--teal);
+      border-radius: 4px;
+      pointer-events: none;
+    }
+
+    .cover-border::before {
+      content: '';
+      position: absolute;
+      top: 4px; right: 4px; bottom: 4px; left: 4px;
+      border: 1px solid var(--gold);
+      border-radius: 2px;
+    }
+
+    .cover-logo img {
+      max-width: 180px;
+      height: auto;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+    }
+
+    .cover h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 6px;
+    }
+
+    .cover h2 {
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 30px;
+    }
+
+    .cover-divider {
+      width: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 10px auto;
+    }
+
+    .cover h3 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text-dark);
+      margin: 20px 0;
+    }
+
+    .cover-fields {
+      width: 55%;
+      max-width: 400px;
+      margin-top: 24px;
+      border: 1.5px solid var(--teal);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .cover-field {
+      display: flex;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .cover-field:last-child {
+      border-bottom: none;
+    }
+
+    .cover-field-label {
+      width: 140px;
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #fff;
+      background: var(--teal);
+      display: flex;
+      align-items: center;
+    }
+
+    .cover-field-value {
+      flex: 1;
+      padding: 12px 16px;
+      min-height: 38px;
+      border-left: 1px solid var(--border-light);
+      font-size: 13px;
+      color: var(--text-dark);
+    }
+
+    .cover-footer-text {
+      position: absolute;
+      bottom: 32px;
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-light);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SHEET COMMON
+       ═══════════════════════════════════════════════════════════════ */
+    .sheet-page {
+      padding: 10px 0;
+    }
+
+    .sheet-page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 3px solid var(--teal);
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+
+    .sheet-page-header h2 {
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--teal);
+    }
+
+    .sheet-page-header .sheet-sub {
+      font-size: 10px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    .header-meta {
+      text-align: right;
+      font-size: 9px;
+      color: var(--text-light);
+    }
+
+    .header-meta .logo-small {
+      height: 28px;
+      margin-bottom: 4px;
+    }
+
+    .patient-bar {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-bottom: 14px;
+      font-size: 10px;
+    }
+
+    .patient-bar-item {
+      flex: 1;
+      padding: 6px 10px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .patient-bar-item:last-child {
+      border-right: none;
+    }
+
+    .patient-bar-label {
+      font-size: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-light);
+      margin-bottom: 2px;
+    }
+
+    .patient-bar-value {
+      min-height: 14px;
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+
+    .page-footer {
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      font-size: 8px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       MEDICAL TABLES
+       ═══════════════════════════════════════════════════════════════ */
+    table.med-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+      font-size: 10px;
+    }
+
+    .med-table thead th {
+      background: var(--teal);
+      color: #fff;
+      padding: 7px 8px;
+      text-transform: uppercase;
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-align: left;
+      border: 1px solid var(--teal);
+    }
+
+    .med-table tbody td {
+      padding: 7px 8px;
+      border: 1px solid var(--border);
+      min-height: 22px;
+      vertical-align: top;
+    }
+
+    .med-table tbody tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    .med-table .empty-row td {
+      height: 28px;
+    }
+
+    .section-label {
+      background: #f1f5f9;
+      padding: 8px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal);
+      border: 1px solid var(--border);
+      border-bottom: 2px solid var(--teal);
+      margin-top: 14px;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       FLUID BALANCE TABLE
+       ═══════════════════════════════════════════════════════════════ */
+    .fluid-table thead th {
+      font-size: 7px;
+      padding: 5px 3px;
+      text-align: center;
+    }
+
+    .fluid-table tbody td {
+      padding: 3px 2px;
+      text-align: center;
+      height: 20px;
+      font-size: 9px;
+    }
+
+    .fluid-table .hour-col {
+      width: 36px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: var(--teal);
+    }
+
+    .fluid-table .intake-header {
+      background: #1d4ed8;
+      color: #fff;
+    }
+
+    .fluid-table .output-header {
+      background: #dc2626;
+      color: #fff;
+    }
+
+    .fluid-table .total-header {
+      background: var(--teal);
+    }
+
+    .fluid-table .subtotal-row {
+      background: #e2e8f0 !important;
+      font-weight: 700;
+    }
+
+    .fluid-table .subtotal-row td {
+      border-top: 2px solid var(--text-mid);
+      border-bottom: 2px solid var(--text-mid);
+    }
+
+    .fluid-table .grand-total-row {
+      background: #f1f5f9 !important;
+      font-weight: 700;
+      font-size: 10px;
+    }
+
+    .fluid-table .grand-total-row td {
+      border-top: 3px double var(--teal);
+      padding: 5px 3px;
+    }
+
+    .weight-row {
+      margin-top: 8px;
+      display: flex;
+      gap: 20px;
+      font-size: 10px;
+    }
+
+    .weight-row span {
+      font-weight: 600;
+      color: var(--text-mid);
+    }
+
+    .weight-row .line {
+      flex: 0 0 120px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       LAB TABLE
+       ═══════════════════════════════════════════════════════════════ */
+    .lab-table thead th {
+      text-align: center;
+      min-width: 60px;
+    }
+
+    .lab-table thead th:first-child,
+    .lab-table thead th:nth-child(2) {
+      text-align: left;
+    }
+
+    .lab-table tbody td {
+      text-align: center;
+    }
+
+    .lab-table tbody td:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .lab-table tbody td:nth-child(2) {
+      text-align: left;
+      font-size: 8px;
+      color: var(--text-light);
+    }
+
+    .lab-table .cat-header td {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: var(--teal);
+      text-align: left !important;
+      padding: 6px 8px;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .lab-table .range-col {
+      font-size: 8px;
+      color: var(--text-light);
+      min-width: 55px;
+      text-align: center;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       PROGRESS NOTES
+       ═══════════════════════════════════════════════════════════════ */
+    .note-block {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-bottom: 14px;
+      page-break-inside: avoid;
+    }
+
+    .note-header {
+      display: flex;
+      gap: 16px;
+      padding: 8px 12px;
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      font-size: 10px;
+    }
+
+    .note-header-label {
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      font-size: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .note-section {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .note-section:last-child {
+      border-bottom: none;
+    }
+
+    .note-section-tag {
+      display: inline-block;
+      background: var(--teal);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .note-lines {
+      min-height: 36px;
+      border-bottom: 1px dotted var(--border-light);
+    }
+
+    .note-signature {
+      padding: 8px 12px;
+      text-align: right;
+      font-size: 10px;
+      color: var(--text-mid);
+    }
+
+    .note-signature .line {
+      display: inline-block;
+      width: 180px;
+      border-bottom: 1px solid var(--border);
+      margin-left: 8px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       I/O SUMMARY
+       ═══════════════════════════════════════════════════════════════ */
+    .io-table tbody td {
+      height: 28px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       ADMISSION FORM
+       ═══════════════════════════════════════════════════════════════ */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    .form-cell {
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-cell-full {
+      grid-column: 1 / -1;
+    }
+
+    .form-cell-label {
+      font-size: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-light);
+      margin-bottom: 2px;
+    }
+
+    .form-cell-value {
+      min-height: 18px;
+      font-size: 11px;
+      color: var(--text-dark);
+    }
+
+    .form-cell-tall .form-cell-value {
+      min-height: 36px;
+    }
+
+    .checkbox-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 20px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+    }
+
+    .checkbox-item .box {
+      width: 13px;
+      height: 13px;
+      border: 1.5px solid var(--border);
+      border-radius: 2px;
+    }
+
+    .vitals-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    .vital-cell {
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .vital-cell-label {
+      font-size: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 2px;
+    }
+
+    .vital-cell-value {
+      min-height: 18px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* ─── SCREEN ENHANCEMENTS ─── */
+    @media screen {
+      .sheet-page {
+        max-width: 210mm;
+        margin: 20px auto;
+        padding: 30px;
+        background: #fff;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .cover {
+        max-width: 210mm;
+        margin: 20px auto;
+        background: #fff;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ TOOLBAR (screen only) ═══ -->
+  <div class="toolbar">
+    <div class="toolbar-title">📋 <span>Inside Medicine Care</span> — Blank Medical File Template</div>
+    <div class="toolbar-actions">
+      <button class="toolbar-btn btn-back" onclick="window.location.href='index.html'">← Back to App</button>
+      <button class="toolbar-btn btn-print" onclick="window.print()">🖨️ Print All Sheets</button>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         PAGE 1: COVER
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="cover page-break">
+      <div class="cover-border"></div>
+      <div class="cover-logo">
+        <img src="logo.png" alt="Inside Medicine Care">
+      </div>
+      <h1>Inside Medicine Care</h1>
+      <h2>Critical Care & Home Medical Services</h2>
+      <div class="cover-divider"></div>
+      <h3>Patient Medical File</h3>
+      <div class="cover-divider"></div>
+
+      <div class="cover-fields">
+        <div class="cover-field">
+          <div class="cover-field-label">Patient Name</div>
+          <div class="cover-field-value"></div>
+        </div>
+        <div class="cover-field">
+          <div class="cover-field-label">Age</div>
+          <div class="cover-field-value"></div>
+        </div>
+      </div>
+
+      <div class="cover-footer-text">CONFIDENTIAL • CRITICAL CARE RECORD</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         PAGE 2: ADMISSION SHEET
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="sheet-page page-break">
+      <div class="sheet-page-header">
+        <div>
+          <h2>ICU Admission Sheet</h2>
+          <div class="sheet-sub">Patient Intake & Clinical Assessment</div>
+        </div>
+        <div class="header-meta">
+          <img src="logo.png" class="logo-small" alt=""><br>
+          Inside Medicine Care
+        </div>
+      </div>
+
+      <!-- Patient Demographics -->
+      <div class="section-label"><span class="section-num">1</span> PATIENT DEMOGRAPHICS</div>
+      <div class="form-grid">
+        <div class="form-cell"><span class="form-cell-label">Full Name (English)</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">Full Name (Arabic)</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">Age</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">Gender</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">File Number</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">Phone</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">Admission Date</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">Location</span><span class="form-cell-value"></span></div>
+      </div>
+
+      <!-- Clinical Information -->
+      <div class="section-label"><span class="section-num">2</span> CLINICAL INFORMATION</div>
+      <div class="form-grid">
+        <div class="form-cell form-cell-full"><span class="form-cell-label">Primary Diagnosis</span><span class="form-cell-value"></span></div>
+        <div class="form-cell form-cell-full form-cell-tall"><span class="form-cell-label">Comorbidities</span><span class="form-cell-value"></span></div>
+        <div class="form-cell form-cell-full form-cell-tall"><span class="form-cell-label">Past Medical & Surgical History</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">Drug Allergies</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">Code Status (Full Code / DNR / DNI)</span><span class="form-cell-value"></span></div>
+      </div>
+
+      <!-- Initial Assessment -->
+      <div class="section-label"><span class="section-num">3</span> INITIAL ASSESSMENT</div>
+      <div class="form-grid">
+        <div class="form-cell"><span class="form-cell-label">Weight (kg)</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">Height (cm)</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">GCS Score</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">Patient Status</span><span class="form-cell-value"></span></div>
+      </div>
+
+      <!-- Vital Signs -->
+      <div class="section-label"><span class="section-num">4</span> VITAL SIGNS ON ADMISSION</div>
+      <div class="vitals-grid">
+        <div class="vital-cell"><div class="vital-cell-label">Blood Pressure</div><div class="vital-cell-value"></div></div>
+        <div class="vital-cell"><div class="vital-cell-label">Heart Rate</div><div class="vital-cell-value"></div></div>
+        <div class="vital-cell"><div class="vital-cell-label">Temperature</div><div class="vital-cell-value"></div></div>
+        <div class="vital-cell"><div class="vital-cell-label">Resp. Rate</div><div class="vital-cell-value"></div></div>
+        <div class="vital-cell"><div class="vital-cell-label">SpO₂</div><div class="vital-cell-value"></div></div>
+      </div>
+
+      <!-- Devices & Lines -->
+      <div class="section-label"><span class="section-num">5</span> DEVICES & LINES</div>
+      <div class="checkbox-grid">
+        <div class="checkbox-item"><div class="box"></div> Tracheostomy</div>
+        <div class="checkbox-item"><div class="box"></div> NGT</div>
+        <div class="checkbox-item"><div class="box"></div> Foley Catheter</div>
+        <div class="checkbox-item"><div class="box"></div> Central Line</div>
+        <div class="checkbox-item"><div class="box"></div> Peripheral Line</div>
+        <div class="checkbox-item"><div class="box"></div> Chest Tube</div>
+        <div class="checkbox-item"><div class="box"></div> Other: _______________</div>
+      </div>
+
+      <!-- Emergency Contact -->
+      <div class="section-label"><span class="section-num">6</span> EMERGENCY CONTACT</div>
+      <div class="form-grid">
+        <div class="form-cell"><span class="form-cell-label">Contact Name</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">Relation</span><span class="form-cell-value"></span></div>
+        <div class="form-cell form-cell-full"><span class="form-cell-label">Phone</span><span class="form-cell-value"></span></div>
+      </div>
+
+      <!-- Attending -->
+      <div class="form-grid" style="margin-top:12px;">
+        <div class="form-cell"><span class="form-cell-label">Attending Physician</span><span class="form-cell-value"></span></div>
+        <div class="form-cell"><span class="form-cell-label">Signature</span><span class="form-cell-value"></span></div>
+      </div>
+
+      <div class="page-footer">
+        <span>Critical Care Record • Medical File Confidential</span>
+        <span>Inside Medicine Care</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         PAGE 3-4: DRUG ORDER SHEET
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="sheet-page page-break">
+      <div class="sheet-page-header">
+        <div>
+          <h2>Critical Care Pharmacotherapy Matrix</h2>
+          <div class="sheet-sub">Intensive Care Unit (ICU) — Drug Order Sheet</div>
+        </div>
+        <div class="header-meta">
+          <img src="logo.png" class="logo-small" alt=""><br>
+          Inside Medicine Care
+        </div>
+      </div>
+
+      <div class="patient-bar">
+        <div class="patient-bar-item"><span class="patient-bar-label">Patient Name</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">Diagnosis</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">Location</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">Date</span><span class="patient-bar-value"></span></div>
+      </div>
+
+      <!-- Section 1 -->
+      <div class="section-label"><span class="section-num">1</span> INTRAVENOUS INFUSIONS & VOLUME EXPANSION (HIGH VIGILANCE)</div>
+      <table class="med-table">
+        <thead><tr><th>Medication / Fluid</th><th>Exact Dosage</th><th>Route</th><th>Frequency</th><th>Clinical Nursing Directives</th></tr></thead>
+        <tbody>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <!-- Section 2 -->
+      <div class="section-label"><span class="section-num">2</span> SCHEDULED INTRAVENOUS INTERMITTENT MEDICATIONS (IV PUSH)</div>
+      <table class="med-table">
+        <thead><tr><th>Medication Name</th><th>Exact Dosage</th><th>Route</th><th>Frequency</th><th>Scheduled Timing</th></tr></thead>
+        <tbody>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <!-- Section 3 -->
+      <div class="section-label"><span class="section-num">3</span> SUBCUTANEOUS MEDICATIONS (SC)</div>
+      <table class="med-table">
+        <thead><tr><th>Medication Name</th><th>Exact Dosage</th><th>Route</th><th>Frequency</th><th>Scheduled Timing</th></tr></thead>
+        <tbody>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <div class="page-footer">
+        <span>Critical Care Record • Medical File Confidential</span>
+        <span>Page 1 of 2</span>
+      </div>
+    </div>
+
+    <!-- Drug Orders Page 2 -->
+    <div class="sheet-page page-break">
+      <div class="sheet-page-header">
+        <div>
+          <h2>Drug Order Sheet (Continued)</h2>
+          <div class="sheet-sub">Oral, Procedural & Monitoring Protocols</div>
+        </div>
+        <div class="header-meta">
+          <img src="logo.png" class="logo-small" alt=""><br>
+          Inside Medicine Care
+        </div>
+      </div>
+
+      <!-- Section 4 -->
+      <div class="section-label"><span class="section-num">4</span> SCHEDULED ENTERAL / ORAL MEDICATIONS (PO)</div>
+      <table class="med-table">
+        <thead><tr><th>Medication Name</th><th>Exact Dosage</th><th>Route</th><th>Frequency</th><th>Scheduled Timing</th></tr></thead>
+        <tbody>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <!-- Section 5 -->
+      <div class="section-label"><span class="section-num">5</span> PROCEDURAL & INHALATIONAL THERAPIES</div>
+      <table class="med-table">
+        <thead><tr><th>Therapy Type</th><th>Intervention</th><th>Route</th><th>Frequency</th><th>Scheduled Timing</th></tr></thead>
+        <tbody>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <!-- Section 6 -->
+      <div class="section-label"><span class="section-num">6</span> ICU MONITORING PROTOCOLS & DIRECTIVES</div>
+      <table class="med-table">
+        <thead><tr><th style="width:30%;">Protocol Title</th><th>Details / Directives</th></tr></thead>
+        <tbody>
+          <tr class="empty-row"><td></td><td style="height:50px;"></td></tr>
+          <tr class="empty-row"><td></td><td style="height:50px;"></td></tr>
+          <tr class="empty-row"><td></td><td style="height:50px;"></td></tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:16px;display:flex;justify-content:space-between;font-size:10px;color:var(--text-mid);">
+        <div>Attending Physician: ________________________________</div>
+        <div>Signature: ________________________________</div>
+        <div>Date: ____/____/________</div>
+      </div>
+
+      <div class="page-footer">
+        <span>Critical Care Record • Medical File Confidential</span>
+        <span>Page 2 of 2</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         PAGE 5: FLUID BALANCE SHEET (24-HOUR)
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="sheet-page page-break">
+      <div class="sheet-page-header">
+        <div>
+          <h2>24-Hour Fluid Balance Sheet</h2>
+          <div class="sheet-sub">Hourly Intake & Output Monitoring</div>
+        </div>
+        <div class="header-meta">
+          <img src="logo.png" class="logo-small" alt=""><br>
+          Date: ____/____/________
+        </div>
+      </div>
+
+      <div class="patient-bar">
+        <div class="patient-bar-item"><span class="patient-bar-label">Patient Name</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">File #</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">Date</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">Day #</span><span class="patient-bar-value"></span></div>
+      </div>
+
+      <table class="med-table fluid-table">
+        <thead>
+          <tr>
+            <th rowspan="2" class="total-header">Hour</th>
+            <th colspan="5" class="intake-header">INTAKE (ml)</th>
+            <th rowspan="2" class="total-header">Total<br>Intake</th>
+            <th colspan="5" class="output-header">OUTPUT (ml)</th>
+            <th rowspan="2" class="total-header">Total<br>Output</th>
+            <th rowspan="2" class="total-header">Balance</th>
+          </tr>
+          <tr>
+            <th class="intake-header">IV Fluids</th>
+            <th class="intake-header">Meds</th>
+            <th class="intake-header">Enteral<br>Feed</th>
+            <th class="intake-header">Oral</th>
+            <th class="intake-header">Blood<br>Products</th>
+            <th class="output-header">Urine</th>
+            <th class="output-header">Drain</th>
+            <th class="output-header">NGT</th>
+            <th class="output-header">Stool</th>
+            <th class="output-header">Emesis</th>
+          </tr>
+        </thead>
+        <tbody id="fluid-body">
+          <script>
+            // Generate 24 hour rows + 4 subtotal rows + 1 grand total
+            (function(){
+              var tbody = '';
+              var hours = ['00:00','01:00','02:00','03:00','04:00','05:00','06:00','07:00','08:00','09:00','10:00','11:00',
+                           '12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'];
+              var subtotalAfter = [5, 11, 17, 23];
+              var subtotalLabels = ['Night (00-05)', 'Morning (06-11)', 'Afternoon (12-17)', 'Evening (18-23)'];
+
+              for (var i = 0; i < 24; i++) {
+                tbody += '<tr>';
+                tbody += '<td class="hour-col">' + hours[i] + '</td>';
+                for (var j = 0; j < 12; j++) tbody += '<td></td>';
+                tbody += '<td></td>'; // balance
+                tbody += '</tr>';
+
+                var si = subtotalAfter.indexOf(i);
+                if (si !== -1) {
+                  tbody += '<tr class="subtotal-row">';
+                  tbody += '<td class="hour-col" style="font-size:7px;">' + subtotalLabels[si] + '</td>';
+                  for (var k = 0; k < 12; k++) tbody += '<td></td>';
+                  tbody += '<td></td>';
+                  tbody += '</tr>';
+                }
+              }
+
+              // Grand total row
+              tbody += '<tr class="grand-total-row">';
+              tbody += '<td class="hour-col">24h TOTAL</td>';
+              for (var m = 0; m < 12; m++) tbody += '<td></td>';
+              tbody += '<td></td>';
+              tbody += '</tr>';
+
+              document.getElementById('fluid-body').innerHTML = tbody;
+            })();
+          </script>
+        </tbody>
+      </table>
+
+      <div class="weight-row">
+        <span>Daily Weight:</span> <div class="line"></div> kg
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <span>Net 24h Balance:</span> <div class="line"></div> ml
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <span>Nurse Signature:</span> <div class="line"></div>
+      </div>
+
+      <div class="page-footer">
+        <span>Critical Care Record • Medical File Confidential</span>
+        <span>Inside Medicine Care</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         PAGE 6: DAILY I/O SUMMARY (7-DAY)
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="sheet-page page-break">
+      <div class="sheet-page-header">
+        <div>
+          <h2>Daily Intake & Output Summary</h2>
+          <div class="sheet-sub">7-Day Cumulative Fluid Balance Overview</div>
+        </div>
+        <div class="header-meta">
+          <img src="logo.png" class="logo-small" alt=""><br>
+          Inside Medicine Care
+        </div>
+      </div>
+
+      <div class="patient-bar">
+        <div class="patient-bar-item"><span class="patient-bar-label">Patient Name</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">File #</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">Week Starting</span><span class="patient-bar-value"></span></div>
+      </div>
+
+      <table class="med-table io-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Day #</th>
+            <th>Total Intake (ml)</th>
+            <th>Total Output (ml)</th>
+            <th>Net Balance (ml)</th>
+            <th>Cumulative Balance (ml)</th>
+            <th>Weight (kg)</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="empty-row"><td></td><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td>2</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td>3</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td>4</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td>5</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td>6</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty-row"><td></td><td>7</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr class="grand-total-row"><td colspan="2" style="text-align:right;font-weight:700;">WEEKLY TOTAL</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:20px;font-size:10px;color:var(--text-mid);">
+        <strong>Physician Comments:</strong>
+        <div style="min-height:80px;border:1px solid var(--border);border-radius:4px;margin-top:6px;padding:8px;"></div>
+      </div>
+
+      <div style="margin-top:16px;display:flex;justify-content:space-between;font-size:10px;color:var(--text-mid);">
+        <div>Attending Physician: ________________________________</div>
+        <div>Signature: ________________________________</div>
+      </div>
+
+      <div class="page-footer">
+        <span>Critical Care Record • Medical File Confidential</span>
+        <span>Inside Medicine Care</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         PAGE 7: AGGREGATED LAB RESULTS
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="sheet-page page-break">
+      <div class="sheet-page-header">
+        <div>
+          <h2>Aggregated Lab Results</h2>
+          <div class="sheet-sub">Laboratory Investigations with Trend Tracking</div>
+        </div>
+        <div class="header-meta">
+          <img src="logo.png" class="logo-small" alt=""><br>
+          Inside Medicine Care
+        </div>
+      </div>
+
+      <div class="patient-bar">
+        <div class="patient-bar-item"><span class="patient-bar-label">Patient Name</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">File #</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">Diagnosis</span><span class="patient-bar-value"></span></div>
+      </div>
+
+      <table class="med-table lab-table">
+        <thead>
+          <tr>
+            <th style="text-align:left;">Parameter</th>
+            <th style="text-align:left;">Unit</th>
+            <th class="range-col">Normal Range</th>
+            <th>Date:<br>__/__/__</th>
+            <th>Date:<br>__/__/__</th>
+            <th>Date:<br>__/__/__</th>
+            <th>Date:<br>__/__/__</th>
+            <th>Date:<br>__/__/__</th>
+            <th>Date:<br>__/__/__</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- CBC -->
+          <tr class="cat-header"><td colspan="9">Complete Blood Count (CBC)</td></tr>
+          <tr><td>WBC</td><td>×10³/µL</td><td class="range-col">4 – 11</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Hemoglobin</td><td>g/dL</td><td class="range-col">12 – 17</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Platelets</td><td>×10³/µL</td><td class="range-col">150 – 400</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+          <!-- Renal -->
+          <tr class="cat-header"><td colspan="9">Renal Function</td></tr>
+          <tr><td>BUN / Urea</td><td>mg/dL</td><td class="range-col">7 – 20</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Creatinine</td><td>mg/dL</td><td class="range-col">0.6 – 1.2</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>eGFR</td><td>mL/min</td><td class="range-col">> 90</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+          <!-- Liver -->
+          <tr class="cat-header"><td colspan="9">Liver Function</td></tr>
+          <tr><td>ALT</td><td>U/L</td><td class="range-col">7 – 56</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>AST</td><td>U/L</td><td class="range-col">10 – 40</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>ALP</td><td>U/L</td><td class="range-col">44 – 147</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>GGT</td><td>U/L</td><td class="range-col">9 – 48</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Total Bilirubin</td><td>mg/dL</td><td class="range-col">0.1 – 1.2</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Direct Bilirubin</td><td>mg/dL</td><td class="range-col">0 – 0.3</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Albumin</td><td>g/dL</td><td class="range-col">3.5 – 5.5</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Total Protein</td><td>g/dL</td><td class="range-col">6 – 8.3</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+          <!-- Electrolytes -->
+          <tr class="cat-header"><td colspan="9">Electrolytes</td></tr>
+          <tr><td>Na⁺</td><td>mEq/L</td><td class="range-col">136 – 145</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>K⁺</td><td>mEq/L</td><td class="range-col">3.5 – 5.0</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Cl⁻</td><td>mEq/L</td><td class="range-col">96 – 106</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Ca²⁺</td><td>mg/dL</td><td class="range-col">8.5 – 10.5</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Mg²⁺</td><td>mg/dL</td><td class="range-col">1.7 – 2.2</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>PO₄³⁻</td><td>mg/dL</td><td class="range-col">2.5 – 4.5</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+          <!-- Coagulation -->
+          <tr class="cat-header"><td colspan="9">Coagulation Profile</td></tr>
+          <tr><td>PT</td><td>sec</td><td class="range-col">11 – 13.5</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>INR</td><td>—</td><td class="range-col">0.8 – 1.1</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>PTT / aPTT</td><td>sec</td><td class="range-col">25 – 35</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+          <!-- ABG -->
+          <tr class="cat-header"><td colspan="9">Arterial Blood Gas (ABG)</td></tr>
+          <tr><td>pH</td><td>—</td><td class="range-col">7.35 – 7.45</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>pCO₂</td><td>mmHg</td><td class="range-col">35 – 45</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>pO₂</td><td>mmHg</td><td class="range-col">80 – 100</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>HCO₃⁻</td><td>mEq/L</td><td class="range-col">22 – 26</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Lactate</td><td>mmol/L</td><td class="range-col">0.5 – 2.0</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Base Excess</td><td>mEq/L</td><td class="range-col">-2 to +2</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+          <!-- Inflammatory -->
+          <tr class="cat-header"><td colspan="9">Inflammatory Markers</td></tr>
+          <tr><td>CRP</td><td>mg/L</td><td class="range-col">0 – 5</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>ESR</td><td>mm/hr</td><td class="range-col">0 – 20</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Procalcitonin</td><td>ng/mL</td><td class="range-col">0 – 0.5</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+          <!-- Special -->
+          <tr class="cat-header"><td colspan="9">Special Investigations</td></tr>
+          <tr><td>HbA1c</td><td>%</td><td class="range-col">< 5.7</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>TSH</td><td>mIU/L</td><td class="range-col">0.4 – 4.0</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Other:</td><td></td><td class="range-col"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Other:</td><td></td><td class="range-col"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <div class="page-footer">
+        <span>Critical Care Record • Medical File Confidential</span>
+        <span>Inside Medicine Care</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         PAGE 8: PROGRESS NOTES (SOAP)
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="sheet-page page-break">
+      <div class="sheet-page-header">
+        <div>
+          <h2>Medical Progress Notes</h2>
+          <div class="sheet-sub">SOAP Format — Daily Clinical Documentation</div>
+        </div>
+        <div class="header-meta">
+          <img src="logo.png" class="logo-small" alt=""><br>
+          Inside Medicine Care
+        </div>
+      </div>
+
+      <div class="patient-bar">
+        <div class="patient-bar-item"><span class="patient-bar-label">Patient Name</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">File #</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">Diagnosis</span><span class="patient-bar-value"></span></div>
+      </div>
+
+      <!-- Note Block 1 -->
+      <div class="note-block">
+        <div class="note-header">
+          <div><span class="note-header-label">Date:</span> ________________</div>
+          <div><span class="note-header-label">Time:</span> ____________</div>
+          <div><span class="note-header-label">Day #:</span> ________</div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">S — SUBJECTIVE</div>
+          <div class="note-lines" style="min-height:32px;"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">O — OBJECTIVE</div>
+          <div class="note-lines" style="min-height:48px;"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">A — ASSESSMENT</div>
+          <div class="note-lines" style="min-height:32px;"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">P — PLAN</div>
+          <div class="note-lines" style="min-height:48px;"></div>
+        </div>
+        <div class="note-signature">Physician: <span class="line"></span></div>
+      </div>
+
+      <!-- Note Block 2 -->
+      <div class="note-block">
+        <div class="note-header">
+          <div><span class="note-header-label">Date:</span> ________________</div>
+          <div><span class="note-header-label">Time:</span> ____________</div>
+          <div><span class="note-header-label">Day #:</span> ________</div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">S — SUBJECTIVE</div>
+          <div class="note-lines" style="min-height:32px;"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">O — OBJECTIVE</div>
+          <div class="note-lines" style="min-height:48px;"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">A — ASSESSMENT</div>
+          <div class="note-lines" style="min-height:32px;"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">P — PLAN</div>
+          <div class="note-lines" style="min-height:48px;"></div>
+        </div>
+        <div class="note-signature">Physician: <span class="line"></span></div>
+      </div>
+
+      <div class="page-footer">
+        <span>Critical Care Record • Medical File Confidential</span>
+        <span>Inside Medicine Care</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         PAGE 9: EXTRA PROGRESS NOTES PAGE
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="sheet-page">
+      <div class="sheet-page-header">
+        <div>
+          <h2>Medical Progress Notes (Continued)</h2>
+          <div class="sheet-sub">SOAP Format — Daily Clinical Documentation</div>
+        </div>
+        <div class="header-meta">
+          <img src="logo.png" class="logo-small" alt=""><br>
+          Inside Medicine Care
+        </div>
+      </div>
+
+      <div class="patient-bar">
+        <div class="patient-bar-item"><span class="patient-bar-label">Patient Name</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">File #</span><span class="patient-bar-value"></span></div>
+        <div class="patient-bar-item"><span class="patient-bar-label">Diagnosis</span><span class="patient-bar-value"></span></div>
+      </div>
+
+      <!-- Note Block 3 -->
+      <div class="note-block">
+        <div class="note-header">
+          <div><span class="note-header-label">Date:</span> ________________</div>
+          <div><span class="note-header-label">Time:</span> ____________</div>
+          <div><span class="note-header-label">Day #:</span> ________</div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">S — SUBJECTIVE</div>
+          <div class="note-lines" style="min-height:32px;"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">O — OBJECTIVE</div>
+          <div class="note-lines" style="min-height:48px;"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">A — ASSESSMENT</div>
+          <div class="note-lines" style="min-height:32px;"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">P — PLAN</div>
+          <div class="note-lines" style="min-height:48px;"></div>
+        </div>
+        <div class="note-signature">Physician: <span class="line"></span></div>
+      </div>
+
+      <!-- Note Block 4 -->
+      <div class="note-block">
+        <div class="note-header">
+          <div><span class="note-header-label">Date:</span> ________________</div>
+          <div><span class="note-header-label">Time:</span> ____________</div>
+          <div><span class="note-header-label">Day #:</span> ________</div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">S — SUBJECTIVE</div>
+          <div class="note-lines" style="min-height:32px;"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">O — OBJECTIVE</div>
+          <div class="note-lines" style="min-height:48px;"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">A — ASSESSMENT</div>
+          <div class="note-lines" style="min-height:32px;"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-section-tag">P — PLAN</div>
+          <div class="note-lines" style="min-height:48px;"></div>
+        </div>
+        <div class="note-signature">Physician: <span class="line"></span></div>
+      </div>
+
+      <div class="page-footer">
+        <span>Critical Care Record • Medical File Confidential</span>
+        <span>Inside Medicine Care</span>
+      </div>
+    </div>
+
+  </div><!-- /content-wrapper -->
+
+</body>
+</html>
