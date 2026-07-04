@@ -352,8 +352,13 @@ const ICUApp = (function () {
     var tbody = document.getElementById('print-fluid-body');
     if (!tbody) return;
     
+    var displayHours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7];
+    var subtotalAfter = [13, 19, 1, 7];
+    var subtotalNames = ['Morning (08-13)', 'Afternoon (14-19)', 'Evening (20-01)', 'Night (02-07)'];
+    
     var html = '';
-    for (var h = 0; h < 24; h++) {
+    for (var i = 0; i < 24; i++) {
+      var h = displayHours[i];
       html += '<tr>';
       html += '<td style="font-weight:600; text-align:center;">' + String(h).padStart(2, '0') + ':00</td>';
       // 5 intake columns
@@ -369,8 +374,9 @@ const ICUApp = (function () {
       html += '</tr>';
       
       // Subtotals
-      if (h === 5 || h === 11 || h === 17 || h === 23) {
-        var periodName = h === 5 ? 'Night (00-05)' : h === 11 ? 'Morning (06-11)' : h === 17 ? 'Afternoon (12-17)' : 'Evening (18-23)';
+      var subIdx = subtotalAfter.indexOf(h);
+      if (subIdx !== -1) {
+        var periodName = subtotalNames[subIdx];
         html += '<tr style="background:#f1f5f9; font-weight:700;">';
         html += '<td colspan="6" style="text-align:right; padding-right:12px;">' + periodName + ' Subtotal:</td>';
         html += '<td style="background:#dbeafe;"></td>';
@@ -1268,20 +1274,20 @@ const ICUApp = (function () {
       return total;
     }
 
-    function calcBlock(startH, endH) {
-      var rows = result.hourly.slice(startH, endH + 1);
+    function calcBlock(hoursList) {
+      var rows = result.hourly.filter(function (r) { return hoursList.indexOf(r.hour) !== -1; });
       var intake = sumFields(rows, FLUID_INPUT_FIELDS);
       var output = sumFields(rows, FLUID_OUTPUT_FIELDS);
       return { intake: intake, output: output, balance: intake - output };
     }
 
-    result.subtotals.night     = calcBlock(0, 5);    // 00:00 - 05:00
-    result.subtotals.morning   = calcBlock(6, 11);   // 06:00 - 11:00
-    result.subtotals.afternoon = calcBlock(12, 17);   // 12:00 - 17:00
-    result.subtotals.evening   = calcBlock(18, 23);   // 18:00 - 23:00
+    result.subtotals.morning   = calcBlock([8, 9, 10, 11, 12, 13]);   // 08:00 - 13:00
+    result.subtotals.afternoon = calcBlock([14, 15, 16, 17, 18, 19]); // 14:00 - 19:00
+    result.subtotals.evening   = calcBlock([20, 21, 22, 23, 0, 1]);   // 20:00 - 01:00 (next day)
+    result.subtotals.night     = calcBlock([2, 3, 4, 5, 6, 7]);       // 02:00 - 07:00 (next day)
 
-    var totalIntake = result.subtotals.night.intake + result.subtotals.morning.intake + result.subtotals.afternoon.intake + result.subtotals.evening.intake;
-    var totalOutput = result.subtotals.night.output + result.subtotals.morning.output + result.subtotals.afternoon.output + result.subtotals.evening.output;
+    var totalIntake = result.subtotals.morning.intake + result.subtotals.afternoon.intake + result.subtotals.evening.intake + result.subtotals.night.intake;
+    var totalOutput = result.subtotals.morning.output + result.subtotals.afternoon.output + result.subtotals.evening.output + result.subtotals.night.output;
     result.grandTotal = { intake: totalIntake, output: totalOutput, balance: totalIntake - totalOutput };
 
     return result;
@@ -1322,8 +1328,14 @@ const ICUApp = (function () {
     var runningIntake = 0;
     var runningOutput = 0;
 
-    for (var h = 0; h < 24; h++) {
-      var row = hourlyData[h];
+    var displayHours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7];
+    var subtotalAfter = [13, 19, 1, 7];
+    var subtotalNames = ['Morning (08-13)', 'Afternoon (14-19)', 'Evening (20-01)', 'Night (02-07)'];
+    var subtotalKeys = ['morning', 'afternoon', 'evening', 'night'];
+
+    for (var i = 0; i < 24; i++) {
+      var h = displayHours[i];
+      var row = hourlyData.find(function (r) { return r.hour === h; }) || initFluidRow(h);
       var hourIntake = (parseFloat(row.ivFluids) || 0) + (parseFloat(row.meds) || 0) + (parseFloat(row.enteralFeed) || 0) + (parseFloat(row.oralIntake) || 0) + (parseFloat(row.bloodProducts) || 0);
       var hourOutput = (parseFloat(row.urineOutput) || 0) + (parseFloat(row.drainOutput) || 0) + (parseFloat(row.ngtOutput) || 0) + (parseFloat(row.stool) || 0) + (parseFloat(row.emesis) || 0);
       var hourBalance = hourIntake - hourOutput;
@@ -1349,9 +1361,10 @@ const ICUApp = (function () {
       html += '</tr>';
 
       // Subtotal rows
-      if (h === 5 || h === 11 || h === 17 || h === 23) {
-        var periodName = h === 5 ? 'Night (00-05)' : h === 11 ? 'Morning (06-11)' : h === 17 ? 'Afternoon (12-17)' : 'Evening (18-23)';
-        var periodKey = h === 5 ? 'night' : h === 11 ? 'morning' : h === 17 ? 'afternoon' : 'evening';
+      var subIdx = subtotalAfter.indexOf(h);
+      if (subIdx !== -1) {
+        var periodName = subtotalNames[subIdx];
+        var periodKey = subtotalKeys[subIdx];
         var sub = totals.subtotals[periodKey];
         var subBalColor = sub.balance > 0 ? '#10b981' : sub.balance < 0 ? '#ef4444' : '#64748b';
         html += '<tr style="background:#f1f5f9;font-weight:700;border-top:2px solid #cbd5e1;">';
@@ -1792,9 +1805,16 @@ const ICUApp = (function () {
       if (cleanupDone) return;
       cleanupDone = true;
       document.body.classList.remove('print-all');
+      window.removeEventListener('focus', cleanup);
     };
     
     window.addEventListener('afterprint', cleanup, { once: true });
+    
+    // Fallback for mobile Chrome where afterprint fires immediately or not at all:
+    // Listen to the window regaining focus when the print dialog is closed/dismissed.
+    setTimeout(function() {
+      window.addEventListener('focus', cleanup, { once: true });
+    }, 1500); // Wait 1.5s before listening to avoid immediate trigger during dialog open
     
     // Keep it active for 5 minutes (300000ms) as a fallback so it doesn't remove class while print dialog is open
     setTimeout(cleanup, 300000);
@@ -1802,7 +1822,7 @@ const ICUApp = (function () {
     // Delay print call to allow DOM reflow and rendering
     setTimeout(function() {
       window.print();
-    }, 200);
+    }, 300);
   }
 
   // ─── Demo Data ─────────────────────────────────────────────────────

@@ -1811,7 +1811,8 @@ body.print-all .print-only {
   body.print-all .sheet {
     display: block !important;
     padding: 0 !important;
-    page-break-before: always;
+    break-before: page !important;
+    page-break-before: always !important;
     opacity: 1 !important;
     animation: none !important;
     transition: none !important;
@@ -1883,7 +1884,8 @@ body.print-all .print-only {
 
   /* ── Sheets ── */
   .sheet {
-    page-break-before: always;
+    break-before: page !important;
+    page-break-before: always !important;
     background: transparent !important;
     background-color: #ffffff !important;
     border: none !important;

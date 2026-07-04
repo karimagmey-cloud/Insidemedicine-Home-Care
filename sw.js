@@ -1,4 +1,4 @@
-const CACHE_NAME = 'imc-cache-v6';
+const CACHE_NAME = 'imc-cache-v8';
 const ASSETS = [
   './index.html',
   './blank_form.html',
